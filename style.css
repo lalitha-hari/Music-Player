@@ -1,0 +1,300 @@
+/* Importing the font and setting global styles */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+*::before, *::after {
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --pink: #ff74a4;
+    --violet: #8a2be2;
+    --lightblack: #333333;
+    --white: #ffffff;
+    --darkwhite: #f5f5f5;
+    --pinkshadow: #ffb6c1;
+    --lightbshadow: #4d4d4d;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-color: #0000;
+}
+
+.wrapper {
+    width:380px;
+    overflow: hidden;
+    position: absolute;
+    border-radius:15px ;
+    padding: 25px 30px;
+    background-color: var(--darkwhite);
+    box-shadow: 0px 6px 15px var(--lightbshadow) ;
+}
+.wrapper {
+    cursor:pointer;
+}
+.top-bar, .progress-area .timer, .controls{
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between ;
+}
+
+.top-bar i{
+    font-size: 30px;
+    color: var(--lightblack);
+}
+
+.top-bar span{
+    font-size:18px;
+    color: var(--lightblack);
+
+}
+.img-area{
+    height:256px;
+    width: 100%;
+    margin-top: 25px;
+    overflow:hidden;
+    border-radius:15px;
+    /* background:olivedrab; */
+    box-shadow: 0px 6px 15px var(--lightbshadow);
+
+}
+
+.img-area img{
+    height: 100%;
+    width:100%;
+    object-fit: fill;
+}
+
+.song-details{
+    text-align: center;
+    margin: 10px 0;
+    margin:30px 0;
+    color: var(--lightbshadow);
+
+}
+.song-details.name{
+    font-size: 21px;
+
+}
+.song-details.artist{
+    opacity:0.9;
+    font-size: 18px;
+    
+}
+/* Progress Bar CSS */
+.progress-bar {
+    width: 100%;
+    height: 5px;
+    background: #ccc;
+    position: relative;
+}
+
+.progress {
+    height: 100%;
+    background: #2196F3;
+    width: 0; /* Default width */
+}
+
+
+.progress-area{
+    height: 6px;
+    width:100%;
+    background:#333333;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+.progress-area .progress-bar{
+    height:inherit;
+    width: 100%;
+    position: relative;
+    border-radius: inherit;
+    background:linear-gradient(90deg,var(--pink) 0%, var(--violet)100%);
+}
+.progress-bar::before{
+    content:"";
+    position:absolute;
+    height: 12px;
+    width:12px;
+    background: #000;
+    border-radius: inherit;
+    top: 50%;
+    right:-5px;
+    transform: translateY(-50%);
+    background:inherit ;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+
+}
+
+
+.progress-area:hover .progress-bar::before{
+    opacity: 1;
+
+}
+.progress-area.timer{
+    margin-top: 2px;
+}
+.timer span{
+    font-size: 13px;
+    color:var(--lightblack);
+
+}
+.controls{
+    margin: 40px 0 5px 0;
+}
+
+.controls i{
+    font-size: 28px;
+    user-select: none;
+    background:linear-gradient(var(--pink) 0%, var(--violet) 80%);
+    background-clip: text ;
+    -webkit-background-clip: text ;
+    -webkit-text-fill-color: transparent;
+}
+.controls i:nth-child(2),
+.controls i:nth-child(4){
+    font-size: 43px;  
+}
+.controls #prev{
+    margin-right: -13px;
+}
+.controls #next{
+    margin-left: -13px;
+}
+.controls .play-pause{
+    height: 54px;
+    width: 54px;
+    background:linear-gradient(var(--white) 0%, var(--darkwhite) 100%);
+    box-shadow: 0px 0px 5px var(--pink);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+.play-pause::before{
+    content:"";
+    position: absolute;
+    height: 43px;
+    width:43px;
+    border-radius: inherit;
+    background: linear-gradient(var(--pink) 0%, var(--voilet) 100%);
+}
+
+.play-pause i{
+    height: 43px;
+    width:43px;
+    line-height: 43px;
+    text-align: center;
+    border-radius: inherit;
+    /* background: inherit; */
+    position: relative;
+    /* background: linear-gradient(var(--pink) 0%, var(--voilet) 100%); */
+    background-clip: text ;
+    -webkit-background-clip: text ;
+    -webkit-text-fill-color: transparent;
+     
+}
+
+/* Music list container */
+.music-list {
+    position: absolute;
+    left: 0;
+    bottom: -55%; /* Initially hide the music list below the viewable area */
+    width: 100%;
+    opacity: 0; /* Hide the list initially */
+    pointer-events: none; /* Prevent interaction when hidden */
+    padding: 15px 30px;
+    border-radius: 15px;
+    background: var(--white);
+    box-shadow: 0px -5px 10px rgba(0,0,0,0.1);
+    transition: bottom 0.3s ease, opacity 0.3s ease; /* Smooth transition */
+}
+
+/* When the music list is shown */
+.music-list.show {
+    bottom: 0; /* Move the music list into view */
+    opacity: 1; /* Make the list visible */
+    pointer-events: auto; /* Allow interaction */
+}
+
+/* Music list header */
+.music-list .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 19px;
+    color: var(--lightblack);
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--lightbshadow); /* Add a border below the header */
+    padding-bottom: 10px;
+}
+
+.music-list .header .row {
+    display: flex;
+    align-items: center;
+    font-size: 19px;
+    color: var(--lightblack);
+}
+
+.music-list .header i {
+    font-size: 24px; /* Adjust icon size */
+}
+
+.music-list .header span {
+    margin-left: 10px;
+}
+
+/* Music list items */
+.music-list ul {
+    list-style: none;
+}
+
+.music-list ul li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--lightbshadow); /* Add a border between items */
+}
+
+.music-list ul li:last-child {
+    border-bottom: none; /* Remove border from the last item */
+}
+
+.music-list .row {
+    font-size: 16px;
+    color: var(--lightblack);
+}
+
+.music-list .audio-duration {
+    font-size: 14px;
+    color: var(--lightblack);
+}
+
+/* Hover effect for the music list */
+.music-list:hover {
+    opacity: 1; /* Ensure the list is visible on hover */
+    pointer-events: auto; /* Allow interaction */
+}
+
+
+
+
+
+

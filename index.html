@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe On - Music Player</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="top-bar">
+            <i class="material-icons">expand_more</i>
+            <span> Now Playing</span>
+            <i class="material-icons">more_horiz</i>
+        </div>
+        <div class="img-area">
+            <img src="media/music-1.jpg" alt="">
+        </div>
+        <div class="song-details">
+            <p class="name">Fear of Devara</p>
+            <p class="artist">Anirudh Ravichandran</p>
+        </div>
+        <div class="progress-area">
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+            <div class="timer">
+                <span class="current">0:00</span>
+                <span class="duration">0:00</span>
+            </div>
+        </div>
+        <div class="controls">
+            <i id="repeat-plist" class="material-icons">repeat</i>
+            <i id="prev" class="material-icons">skip_previous</i>
+            <i id="play-pause" class="material-icons">play_arrow</i>
+            <i id="next" class="material-icons">skip_next</i>
+            <i id="more-music" class="material-icons">queue_music</i>
+        </div>
+        <div class="music-list">
+            <div class="header">
+                <div class="row">
+                    <i class="material-icons">queue_music</i>
+                    <span>Music List</span>
+                    <ul>
+                        <li onclick="selectSong(1)">
+                            <div class="row">
+                                <span>Fear of Devara</span>
+                                <p>Anirudh Ravichandran</p>
+                            </div>
+                            <span class="audio-duration">3:30</span>
+                        </li>
+                        <li onclick="selectSong(2)">
+                            <div class="row">
+                                <span>Nijame Nenu Chebutunna</span>
+                                <p>Sid Sriram</p>
+                            </div>
+                            <span class="audio-duration">3:45</span>
+                        </li>
+                        <li onclick="selectSong(3)">
+                            <div class="row">
+                                <span>Na Roja Nuvve</span>
+                                <p>Sid Sriram</p>
+                            </div>
+                            <span class="audio-duration">4:00</span>
+                        </li>
+                    </ul>
+                </div>
+                <i id="close" class="material-icons">close</i>
+            </div>
+        </div>
+    </div>
+    <audio id="audio"></audio>
+
+    <script>
+        const all_music = [
+            { name: "Fear of Devara", artist: "Anirudh Ravichandran", img: "media/music-1.jpg", src: "song-1.mp3" },
+            { name: "Nijame Nenu Chebutunna", artist: "Sid Sriram", img: "media/music-2.jpg", src: "song-2.mp3" },
+            { name: "Na Roja Nuvve", artist: "Sid Sriram", img: "media/music-3.jpeg", src: "song-3.mp3" }
+        ];
+
+        const wrapper = document.querySelector(".wrapper");
+        const musicImg = wrapper.querySelector(".img-area img");
+        const musicName = wrapper.querySelector(".song-details .name");
+        const musicArtist = wrapper.querySelector(".song-details .artist");
+        const audioElement = document.getElementById("audio");
+        const progressBar = document.querySelector(".progress-bar .progress");
+        const currentTimeElement = document.querySelector(".timer .current");
+        const durationTimeElement = document.querySelector(".timer .duration");
+        let musicIndex = 1;
+        let isPlaying = false;
+        let repeatMode = "none"; // none, repeat, shuffle
+
+        window.addEventListener("load", () => loadMusic(musicIndex));
+
+        function loadMusic(indexNumb) {
+            if (indexNumb >= 1 && indexNumb <= all_music.length) {
+                const music = all_music[indexNumb - 1];
+                musicName.innerText = music.name;
+                musicArtist.innerText = music.artist;
+                musicImg.src = music.img;
+                audioElement.src = music.src;
+                audioElement.addEventListener('loadedmetadata', updateDuration);
+                if (isPlaying) {
+                    audioElement.play();
+                }
+            } else {
+                console.error("Invalid music index:", indexNumb);
+            }
+        }
+
+        function playPauseMusic() {
+            if (isPlaying) {
+                audioElement.pause();
+                isPlaying = false;
+            } else {
+                audioElement.play();
+                isPlaying = true;
+            }
+            updatePlayPauseIcon();
+        }
+
+        function nextMusic() {
+            if (repeatMode === "shuffle") {
+                musicIndex = Math.floor(Math.random() * all_music.length) + 1;
+            } else {
+                musicIndex = (musicIndex % all_music.length) + 1;
+            }
+            loadMusic(musicIndex);
+            playPauseMusic();
+        }
+
+        function prevMusic() {
+            musicIndex = (musicIndex - 2 + all_music.length) % all_music.length + 1;
+            loadMusic(musicIndex);
+            playPauseMusic();
+        }
+
+        function selectSong(index) {
+            musicIndex = index;
+            loadMusic(musicIndex);
+            playPauseMusic();
+        }
+
+        function updatePlayPauseIcon() {
+            const playPauseIcon = document.getElementById("play-pause");
+            playPauseIcon.textContent = isPlaying ? "pause" : "play_arrow";
+        }
+
+        function updateProgress() {
+        const currentTime = audioElement.currentTime;
+        const duration = audioElement.duration;
+
+        console.log('Current Time:', currentTime);
+        console.log('Duration:', duration);
+
+        if (duration) {
+            const progressPercent = (currentTime / duration) * 100;
+            console.log('Progress Percent:', progressPercent);
+            progressBar.style.width = `${progressPercent}%`;
+            currentTimeElement.textContent = formatTime(currentTime);
+        }
+    }
+
+        function updateDuration() {
+            durationTimeElement.textContent = formatTime(audioElement.duration);
+        }
+
+        function formatTime(time) {
+            const minutes = Math.floor(time / 60);
+            const seconds = Math.floor(time % 60);
+            return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+        }
+
+        function toggleRepeatMode() {
+            if (repeatMode === "none") {
+                repeatMode = "repeat";
+                document.getElementById("repeat-plist").textContent = "repeat_one";
+            } else if (repeatMode === "repeat") {
+                repeatMode = "shuffle";
+                document.getElementById("repeat-plist").textContent = "shuffle";
+            } else {
+                repeatMode = "none";
+                document.getElementById("repeat-plist").textContent = "repeat";
+            }
+        }
+
+        // Event listeners
+        document.getElementById("play-pause").addEventListener("click", playPauseMusic);
+        document.getElementById("next").addEventListener("click", nextMusic);
+        document.getElementById("prev").addEventListener("click", prevMusic);
+        document.getElementById("repeat-plist").addEventListener("click", toggleRepeatMode);
+        audioElement.addEventListener("timeupdate", updateProgress);
+
+        document.getElementById("more-music").addEventListener("click", () => {
+            document.querySelector(".music-list").classList.toggle("show");
+        });
+
+        document.getElementById("close").addEventListener("click", () => {
+            document.querySelector(".music-list").classList.remove("show");
+        });
+
+        audioElement.addEventListener("ended", () => {
+            if (repeatMode === "repeat") {
+                audioElement.currentTime = 0;
+                audioElement.play();
+            } else {
+                nextMusic();
+            }
+        });
+    </script>
+</body>
+</html>
